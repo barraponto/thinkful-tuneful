@@ -185,3 +185,15 @@ class TestAPI(unittest.TestCase):
         file_ = files[0]
         self.assertEqual(file_.id, 2)
         self.assertEqual(file_.name, 'file_B.mp3')
+
+    def test_get_uploaded_file(self):
+        path = upload_path('test.txt')
+        with open(path, "wb") as f:
+            f.write(b"File contents")
+
+        response = self.client.get("/uploads/test.txt")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, "text/plain")
+        self.assertEqual(response.data, b"File contents")
+

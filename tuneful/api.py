@@ -136,3 +136,7 @@ def delete_song(id):
 
     data = json.dumps(song.as_dict())
     return Response(data, 200, mimetype="application/json")
+
+@app.route("/uploads/<filename>", methods=["GET"])
+def uploaded_file(filename):
+    return send_from_directory(upload_path(), filename)
