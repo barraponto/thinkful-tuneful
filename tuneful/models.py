@@ -17,7 +17,8 @@ class File(Base):
     def as_dict(self):
         return {
             'id': self.id,
-            'name': self.name
+            'name': self.name,
+            'path': url_for('uploaded_file', filename=self.name)
         }
 
 
@@ -32,8 +33,5 @@ class Song(Base):
     def as_dict(self):
         return {
             'id': self.id,
-            'file': {
-                'id': self.file_.id,
-                'name': self.file_.name
-            }
+            'file': self.file_.as_dict()
         }
