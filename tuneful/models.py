@@ -26,7 +26,8 @@ class Song(Base):
 
     id = Column(Integer, primary_key=True)
     file_id = Column(Integer, ForeignKey('files.id'))
-    file_ = relationship(File, backref=backref('song', uselist=False))
+    file_ = relationship(File, backref=backref('song', uselist=False),
+                         single_parent=True, cascade="all, delete-orphan")
 
     def as_dict(self):
         return {

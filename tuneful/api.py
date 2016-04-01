@@ -119,3 +119,20 @@ def put_song(id):
 
     data = json.dumps(song.as_dict())
     return Response(data, 200, mimetype="application/json")
+
+@app.route('/api/songs/<int:id>', methods=['DELETE'])
+@decorators.accept("application/json")
+@decorators.require("application/json")
+def delete_song(id):
+    song = session.query(models.Song).get(id)
+
+    if not song:
+        message = 'Could not find song with id {}'.format(id)
+        data = json.dumps({'message': message})
+        return Response(data, 404, mimetype='application/json')
+
+    session.delete(song)
+    session.commit()
+
+    data = json.dumps(song.as_dict())
+    return Response(data, 200, mimetype="application/json")

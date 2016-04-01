@@ -155,3 +155,33 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(song.id, 1)
         self.assertEqual(song.file_.id, 2)
         self.assertEqual(song.file_.name, "file_B.mp3")
+
+    def test_delete_song(self):
+        file_A = models.File(name='file_A.mp3')
+        file_B = models.File(name='file_B.mp3')
+        song_A = models.Song(file_=file_A)
+
+        session.add_all([file_A, file_B, song_A])
+        session.commit()
+
+        response = self.client.delete(
+            "/api/songs/{}".format(song_A.id),
+            content_type="application/json",
+            headers=[("Accept", "application/json")])
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, "application/json")
+
+        data = json.loads(response.data.decode("ascii"))
+        self.assertEqual(data["id"], 1)
+        self.assertEqual(data["file"]["id"], 1)
+        self.assertEqual(data["file"]["name"], "file_A.mp3")
+
+        songs = session.query(models.Song).all()
+        self.assertEqual(len(songs), 0)
+
+        files = session.query(models.File).all()
+        self.assertEqual(len(files), 1)
+        file_ = files[0]
+        self.assertEqual(file_.id, 2)
+        self.assertEqual(file_.name, 'file_B.mp3')
